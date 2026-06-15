@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FITFINDR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#F0F2F5;font-family:'Inter',sans-serif;color:#0A0A0A;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+    .ticker{background:#0A0A0A;overflow:hidden;padding:5px 0;white-space:nowrap;flex-shrink:0}
+    .ticker-inner{display:inline-block;animation:tick 22s linear infinite;font-family:'Bebas Neue',sans-serif;font-size:0.65rem;letter-spacing:0.16em;color:#C8F135}
+    .ticker-inner b{color:rgba(255,255,255,0.2);margin:0 14px;font-weight:400}
+    @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:8px 32px;background:#fff;border-bottom:1px solid #E4E4E4;flex-shrink:0}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.1em}
+    .logo span{color:#3B6FFF}
+    .nav-tag{font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#888;background:#F0F0F0;border-radius:99px;padding:4px 10px}
+
+    .hero{background:#fff;border-bottom:1px solid #E4E4E4;padding:14px 32px 12px;flex-shrink:0;text-align:center}
+    .hero-h1{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;line-height:1;letter-spacing:0.04em;color:#0A0A0A}
+    .hero-h1 .cb{color:#3B6FFF}
+    .hero-h1 .co{-webkit-text-stroke:2px #0A0A0A;color:transparent}
+    .hero-sub{font-size:0.78rem;color:#888;line-height:1.5;margin:6px auto 12px;max-width:500px}
+    .search-row{display:flex;max-width:540px;margin:0 auto;border:2px solid #0A0A0A;border-radius:8px;overflow:hidden}
+    .search-row input{flex:1;border:none;outline:none;font-family:'Inter',sans-serif;font-size:0.88rem;padding:9px 14px;color:#0A0A0A;background:#fff}
+    .search-row input::placeholder{color:#C0C0C0}
+    .search-row button{background:#3B6FFF;color:#fff;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:0.63rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 18px;transition:background 0.15s;white-space:nowrap}
+    .search-row button:hover{background:#2855d4}
+    .search-row button:disabled{opacity:0.4;cursor:not-allowed}
+    .toggle-wrap{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px}
+    .toggle-label{font-size:0.63rem;color:#999}
+    .toggle{position:relative;display:inline-block;width:30px;height:17px}
+    .toggle input{opacity:0;width:0;height:0}
+    .sl{position:absolute;inset:0;background:#ddd;border-radius:99px;cursor:pointer;transition:background 0.2s}
+    .sl::before{content:'';position:absolute;width:11px;height:11px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+    .toggle input:checked+.sl{background:#3B6FFF}
+    .toggle input:checked+.sl::before{transform:translateX(13px)}
+    .status{font-size:0.65rem;color:#3B6FFF;display:none;align-items:center;justify-content:center;gap:5px;margin-top:6px}
+    .status.on{display:flex}
+    .ld{width:4px;height:4px;border-radius:50%;background:#3B6FFF;animation:ld 1s infinite}
+    .ld:nth-child(2){animation-delay:.15s}.ld:nth-child(3){animation-delay:.3s}
+    @keyframes ld{0%,100%{opacity:.2}50%{opacity:1}}
+    .err{display:none;font-size:0.68rem;color:#E53E3E;text-align:center;margin-top:5px}
+    .err.on{display:block}
+
+    /* Cards */
+    .cards-section{flex:1;min-height:0;padding:14px 32px 0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px}
+    .card{
+      background:#EEF2FF;
+      border:2px solid #C7D7FD;
+      border-radius:12px;
+      padding:16px 18px;
+      display:flex;flex-direction:column;gap:8px;
+      overflow:hidden;
+      transition:transform 0.18s,box-shadow 0.18s;
+    }
+    .card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,111,255,0.12)}
+
+    .card-label{font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#3B6FFF}
+    .card-empty{font-size:0.9rem;color:#93A8F4}
+
+    .price-num{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;line-height:1;color:#1D3FAF}
+    .item-name{font-size:1rem;font-weight:600;color:#1E3A8A;line-height:1.3;margin:4px 0}
+    .chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px}
+    .chip{font-size:0.65rem;font-weight:600;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:#C7D7FD;color:#1D4ED8}
+    .card-body{font-size:0.88rem;color:#374151;line-height:1.7;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+    .card-body-i{font-size:0.9rem;font-style:italic;color:#1E3A8A;line-height:1.7;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+
+    /* Example queries */
+    .examples{flex-shrink:0;padding:12px 32px 14px;display:flex;flex-direction:column;gap:6px}
+    .ex-label{font-size:0.6rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#aaa}
+    .ex-pills{display:flex;flex-wrap:wrap;gap:8px}
+    .ex-pill{
+      font-size:0.82rem;font-weight:600;color:#fff;
+      background:linear-gradient(135deg,#6366F1 0%,#8B5CF6 50%,#A855F7 100%);
+      border:none;
+      border-radius:10px;padding:9px 18px;
+      cursor:pointer;font-family:'Inter',sans-serif;
+      white-space:nowrap;
+      box-shadow:0 4px 0 #4338CA, 0 6px 12px rgba(99,102,241,0.35);
+      transition:transform 0.12s,box-shadow 0.12s;
+      position:relative;top:0;
+    }
+    .ex-pill:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 0 #4338CA, 0 10px 20px rgba(99,102,241,0.4);
+    }
+    .ex-pill:active{
+      transform:translateY(3px);
+      box-shadow:0 1px 0 #4338CA, 0 2px 6px rgba(99,102,241,0.3);
+    }
+
+    .sk{background:linear-gradient(90deg,#DBEAFE 25%,#BFDBFE 50%,#DBEAFE 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:4px;margin-bottom:6px}
+    @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .sk-h{height:34px;width:30%}.sk-t{height:12px;width:55%}.sk-l{height:9px}.w90{width:90%}.w70{width:70%}.w50{width:50%}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .fi{animation:fadeUp 0.28s ease forwards}
+  </style>
+</head>
+<body>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    FITFINDR<b>·</b>SECONDHAND DROPS<b>·</b>STYLE YOUR FIT<b>·</b>NEW ARRIVALS<b>·</b>THRIFT AND SLAY<b>·</b>THE EDIT<b>·</b>
+    FITFINDR<b>·</b>SECONDHAND DROPS<b>·</b>STYLE YOUR FIT<b>·</b>NEW ARRIVALS<b>·</b>THRIFT AND SLAY<b>·</b>THE EDIT<b>·</b>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="logo">FIT<span>FINDR</span></div>
+  <div class="nav-tag">Secondhand · Styled</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-h1">FIND YOUR <span class="cb">NEXT</span> <span class="co">FIT.</span></div>
+  <p class="hero-sub">Find secondhand pieces and get outfit ideas based on your wardrobe. Describe what you are looking for and include size and price if you want to filter.</p>
+  <div class="search-row">
+    <input id="q" type="text" placeholder="e.g. vintage graphic tee under $30, size M"/>
+    <button id="btn" onclick="go()">Search</button>
+  </div>
+  <div class="toggle-wrap">
+    <label class="toggle"><input type="checkbox" id="wt" checked/><span class="sl"></span></label>
+    <span class="toggle-label">Use example wardrobe</span>
+  </div>
+  <div class="status" id="st"><div class="ld"></div><div class="ld"></div><div class="ld"></div> Finding your fit...</div>
+  <div class="err" id="err"></div>
+</div>
+
+<div class="cards-section">
+  <div class="card"><div class="card-label">Top Listing</div><div id="i1"><div class="card-empty">Search to see a listing</div></div></div>
+  <div class="card"><div class="card-label">Price Check</div><div id="i2"><div class="card-empty">Price analysis will appear here</div></div></div>
+  <div class="card"><div class="card-label">Outfit Idea</div><div id="i3"><div class="card-empty">Outfit suggestions will appear here</div></div></div>
+  <div class="card"><div class="card-label">Fit Card</div><div id="i4"><div class="card-empty">Your fit card will appear here</div></div></div>
+</div>
+
+<div class="examples">
+  <div class="ex-label">Try these</div>
+  <div class="ex-pills">
+    <div class="ex-pill" onclick="fq('vintage graphic tee under $30')">vintage graphic tee under $30</div>
+    <div class="ex-pill" onclick="fq('90s track jacket size M')">90s track jacket size M</div>
+    <div class="ex-pill" onclick="fq('flowy midi skirt under $40')">flowy midi skirt under $40</div>
+    <div class="ex-pill" onclick="fq('black combat boots size 8')">black combat boots size 8</div>
+    <div class="ex-pill" onclick="fq('designer ballgown size XXS under $5')">designer ballgown size XXS under $5</div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  function fq(v){document.getElementById('q').value=v;document.getElementById('q').focus()}
+  function sk(){return'<div class="sk sk-l w90"></div><div class="sk sk-l w70"></div><div class="sk sk-l w50"></div>'}
+  function reset(){
+    const l=['Search to see a listing','Price analysis will appear here','Outfit suggestions will appear here','Your fit card will appear here'];
+    ['i1','i2','i3','i4'].forEach((id,i)=>document.getElementById(id).innerHTML=`<div class="card-empty">${l[i]}</div>`);
+  }
+  async function go(){
+    const q=document.getElementById('q').value.trim();if(!q)return;
+    const btn=document.getElementById('btn');
+    btn.disabled=true;btn.textContent='...';
+    document.getElementById('st').classList.add('on');
+    document.getElementById('err').classList.remove('on');
+    document.getElementById('i1').innerHTML='<div class="sk sk-h"></div><div class="sk sk-t"></div>'+sk();
+    ['i2','i3','i4'].forEach(id=>document.getElementById(id).innerHTML=sk());
+    try{
+      const r=await fetch('/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,wardrobe:document.getElementById('wt').checked})});
+      const d=await r.json();
+      if(!r.ok||d.error){document.getElementById('err').textContent=d.error||'No results. Try a broader search.';document.getElementById('err').classList.add('on');reset();}
+      else render(d);
+    }catch(e){document.getElementById('err').textContent='Cannot reach server.';document.getElementById('err').classList.add('on');reset();}
+    finally{document.getElementById('st').classList.remove('on');btn.disabled=false;btn.textContent='Search';}
+  }
+  function render(d){
+    const it=d.listing;
+    [{id:'i1',html:`<div class="price-num">$${it.price}</div><div class="item-name">${it.title}</div><div class="chips"><span class="chip">${it.size}</span><span class="chip">${it.condition}</span><span class="chip">${it.platform}</span><span class="chip">${it.brand}</span></div><div class="card-body">${it.description}</div>`},
+     {id:'i2',html:`<div class="card-body">${d.price_analysis}</div>`},
+     {id:'i3',html:`<div class="card-body-i">${d.outfit}</div>`},
+     {id:'i4',html:`<div class="card-body">${d.fit_card}</div>`}
+    ].forEach(({id,html},i)=>setTimeout(()=>{document.getElementById(id).innerHTML=`<div class="fi">${html}</div>`},i*80));
+  }
+</script>
+</body>
+</html>
