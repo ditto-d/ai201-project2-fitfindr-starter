@@ -139,7 +139,7 @@ If no comparable listings are available, the tool returns a message stating that
 
 If search_listings returns no results, the agent automatically retries with relaxed constraints by removing the size filter before terminating.
 
-```
+---
 
 
 
