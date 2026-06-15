@@ -114,7 +114,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
             parsed["max_price"]
         )
 
-        # Retry logic (bonus point)
+        # Retry logic
         if not results:
             results = search_listings(
                 parsed["description"],
